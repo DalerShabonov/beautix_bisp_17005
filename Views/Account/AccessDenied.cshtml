@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 text-center">
+        <h2 class="mb-3">Access Denied</h2>
+        <p class="text-muted">
+            You do not have permission to view this page.
+            Please sign in with an account that has the required access level.
+        </p>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-primary mt-2">
+            Back to Sign In
+        </a>
+    </div>
+</div>
