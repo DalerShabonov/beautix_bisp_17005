@@ -35,6 +35,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<ISalonService, SalonService>();
 
 var app = builder.Build();
 

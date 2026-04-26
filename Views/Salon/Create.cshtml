@@ -1,0 +1,92 @@
+﻿@model beautix_bisp_17005.ViewModels.SalonCreateViewModel
+@{
+    ViewData["Title"] = "Register Your Salon";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="card-title mb-1">Register your salon</h2>
+                    <p class="text-muted mb-4">
+                        Complete the form below to apply to join the
+                        Beautix partner network. Your salon will be
+                        reviewed and approved by our team.
+                    </p>
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger" role="alert"></div>
+
+                    <form asp-action="Create" method="post">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control"
+                                   placeholder="e.g. Salon Lumiere" />
+                            <span asp-validation-for="Name"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8">
+                                <label asp-for="Address" class="form-label"></label>
+                                <input asp-for="Address" class="form-control"
+                                       placeholder="Street address" />
+                                <span asp-validation-for="Address"
+                                      class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="District" class="form-label"></label>
+                                <select asp-for="District" class="form-select">
+                                    <option value="">Select district</option>
+                                    <option>Yunusabad</option>
+                                    <option>Chilanzar</option>
+                                    <option>Mirzo Ulugbek</option>
+                                    <option>Shaykhantahur</option>
+                                    <option>Yakkasaray</option>
+                                    <option>Almazar</option>
+                                </select>
+                                <span asp-validation-for="District"
+                                      class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ContactEmail" class="form-label"></label>
+                                <input asp-for="ContactEmail" class="form-control"
+                                       placeholder="salon@example.com" />
+                                <span asp-validation-for="ContactEmail"
+                                      class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ContactPhone" class="form-label"></label>
+                                <input asp-for="ContactPhone" class="form-control"
+                                       placeholder="+998 XX XXX XX XX" />
+                                <span asp-validation-for="ContactPhone"
+                                      class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control"
+                                      rows="3"
+                                      placeholder="Brief description of your salon and services"></textarea>
+                            <span asp-validation-for="Description"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Submit for Approval
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
