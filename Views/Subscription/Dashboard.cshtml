@@ -1,0 +1,99 @@
+﻿@model beautix_bisp_17005.ViewModels.SubscriptionDashboardViewModel
+@{
+    ViewData["Title"] = "My Subscription";
+}
+
+<div class="container py-5">
+    <h1 class="fw-semibold mb-4">My Subscription</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (!Model.HasActiveSubscription)
+    {
+        <div class="card border-0 bg-light p-4 text-center">
+            <h4 class="mb-3">You do not have an active subscription</h4>
+            <p class="text-muted mb-4">
+                Choose a plan to start booking beauty services
+                across our partner salon network.
+            </p>
+            <a asp-action="Plans" class="btn btn-primary px-4">View Plans</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 bg-light">
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-1">Current plan</p>
+                        <h3 class="fw-bold">@Model.PlanName</h3>
+                        <p class="fs-4 fw-semibold mb-0">$@Model.MonthlyPrice
+                            <span class="fs-6 text-muted fw-normal">/ month</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 bg-light">
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-1">Services this month</p>
+                        @if (Model.IsUnlimited)
+                        {
+                            <h3 class="fw-bold">@Model.ServicesUsed used</h3>
+                            <p class="text-muted mb-0">Unlimited plan — no cap</p>
+                        }
+                        else
+                        {
+                            <h3 class="fw-bold">
+                                @Model.ServicesRemaining remaining
+                            </h3>
+                            <div class="progress mt-2" style="height: 8px;">
+                                @{
+                                    var pct = Model.ServiceAllowance > 0
+                                        ? (int)((double)Model.ServicesUsed / Model.ServiceAllowance * 100)
+                                        : 0;
+                                }
+                                <div class="progress-bar bg-primary"
+                                     style="width: @pct%"
+                                     role="progressbar"
+                                     aria-valuenow="@pct"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                            <p class="text-muted small mt-1 mb-0">
+                                @Model.ServicesUsed of @Model.ServiceAllowance used
+                            </p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 bg-light">
+                    <div class="card-body p-4">
+                        <p class="text-muted small mb-1">Renewal date</p>
+                        <h3 class="fw-bold">@Model.RenewalDate.ToString("dd MMM yyyy")</h3>
+                        <p class="text-muted mb-0 small">
+                            Started @Model.StartDate.ToString("dd MMM yyyy")
+                        </p>
+                        <span class="badge bg-success mt-2">@Model.PaymentStatus</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-3">
+            <a asp-controller="Booking" asp-action="Browse" class="btn btn-primary">
+                Book a Service
+            </a>
+            <a asp-action="Plans" class="btn btn-outline-secondary">
+                Change Plan
+            </a>
+        </div>
+    }
+</div>

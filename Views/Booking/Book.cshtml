@@ -1,0 +1,81 @@
+﻿@model beautix_bisp_17005.ViewModels.BookingCreateViewModel
+@{
+    ViewData["Title"] = "Confirm Booking";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="card-title mb-1">Confirm your booking</h2>
+                    <p class="text-muted mb-4">
+                        Review the details below and choose your appointment time.
+                    </p>
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger" role="alert"></div>
+
+                    <div class="bg-light rounded p-3 mb-4">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <p class="text-muted small mb-1">Salon</p>
+                                <p class="fw-semibold mb-0">@Model.SalonName</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1">Service</p>
+                                <p class="fw-semibold mb-0">@Model.ServiceName</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1">Duration</p>
+                                <p class="fw-semibold mb-0">@Model.DurationMinutes minutes</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1">Credits required</p>
+                                <p class="fw-semibold mb-0">
+                                    <span class="badge bg-primary">
+                                        @Model.CreditsRequired credit@(Model.CreditsRequired > 1 ? "s" : "")
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="Book" method="post">
+                        <input type="hidden" asp-for="ServiceId" />
+                        <input type="hidden" asp-for="ServiceName" />
+                        <input type="hidden" asp-for="SalonName" />
+                        <input type="hidden" asp-for="CreditsRequired" />
+                        <input type="hidden" asp-for="DurationMinutes" />
+
+                        <div class="mb-4">
+                            <label asp-for="AppointmentDate" class="form-label"></label>
+                            <input asp-for="AppointmentDate"
+                                   type="datetime-local"
+                                   class="form-control"
+                                   min="@DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm")" />
+                            <span asp-validation-for="AppointmentDate"
+                                  class="text-danger small"></span>
+                            <div class="form-text">
+                                Bookings can be cancelled up to 24 hours before the appointment.
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                Confirm Booking
+                            </button>
+                            <a asp-action="Browse" class="btn btn-outline-secondary">
+                                Back
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

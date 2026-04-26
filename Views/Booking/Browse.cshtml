@@ -1,0 +1,108 @@
+﻿@model List<beautix_bisp_17005.ViewModels.SalonBrowseViewModel>
+@{
+    ViewData["Title"] = "Book a Service";
+}
+
+<div class="container py-5">
+    <h1 class="fw-semibold mb-2">Book a Service</h1>
+    <p class="text-muted mb-4">
+        Browse our partner salons and select a service to book.
+    </p>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 bg-light p-4 text-center">
+            <h5 class="mb-2">No salons available yet</h5>
+            <p class="text-muted mb-0">
+                Our partner salon network is growing.
+                Please check back soon.
+            </p>
+        </div>
+    }
+    else
+    {
+        @foreach (var salon in Model)
+        {
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4 class="mb-1">@salon.SalonName</h4>
+                            <p class="text-muted small mb-0">
+                                @salon.District &mdash; @salon.Address
+                            </p>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(salon.Description))
+                    {
+                        <p class="mt-2 mb-0 text-muted small">@salon.Description</p>
+                    }
+                </div>
+                <div class="card-body p-0">
+                    @if (!salon.Services.Any())
+                    {
+                        <p class="text-muted p-3 mb-0 small">
+                            No services currently listed for this salon.
+                        </p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Duration</th>
+                                        <th>Credits</th>
+                                        <th>Price</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var service in salon.Services)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@service.ServiceName</strong>
+                                                @if (!string.IsNullOrEmpty(service.Description))
+                                                {
+                                                    <br />
+                                                    <small class="text-muted">
+                                                        @service.Description
+                                                    </small>
+                                                }
+                                            </td>
+                                            <td class="align-middle">
+                                                @service.DurationMinutes min
+                                            </td>
+                                            <td class="align-middle">
+                                                <span class="badge bg-primary">
+                                                    @service.CreditsRequired credit@(service.CreditsRequired > 1 ? "s" : "")
+                                                </span>
+                                            </td>
+                                            <td class="align-middle">
+                                                $@service.Price
+                                            </td>
+                                            <td class="align-middle text-end">
+                                                <a asp-action="Book"
+                                                   asp-route-serviceId="@service.ServiceId"
+                                                   class="btn btn-sm btn-primary">
+                                                    Book
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
