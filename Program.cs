@@ -10,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Read SUPABASE_CONNECTION environment variable if present (Railway + Supabase)
 var supabaseConnection = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
 
+// Always use PostgreSQL — Npgsql for both local and production
+// For local development set SUPABASE_CONNECTION in your environment
+// For production Railway sets SUPABASE_CONNECTION automatically
 if (!string.IsNullOrEmpty(supabaseConnection))
 {
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -17,11 +20,13 @@ if (!string.IsNullOrEmpty(supabaseConnection))
 }
 else
 {
+    // Fallback: read from appsettings.json
+    // For local dev point DefaultConnection to your Supabase connection string
     var localConnection = builder.Configuration
         .GetConnectionString("DefaultConnection")!;
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(localConnection));
+        options.UseNpgsql(localConnection));
 }
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
