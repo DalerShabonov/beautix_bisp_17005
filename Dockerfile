@@ -15,4 +15,4 @@ RUN dotnet publish "beautix_bisp_17005.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "beautix_bisp_17005.dll"]
+ENTRYPOINT ["sh", "-c", "dotnet beautix_bisp_17005.dll --urls http://+:${PORT:-8080}"]

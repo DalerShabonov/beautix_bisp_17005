@@ -2,6 +2,7 @@ using beautix_bisp_17005.Data;
 using beautix_bisp_17005.Models.Entities;
 using beautix_bisp_17005.Services;
 using beautix_bisp_17005.Services.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Read SUPABASE_CONNECTION environment variable if present (Railway + Supabase)
 var supabaseConnection = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
 
-// Always use PostgreSQL — Npgsql for both local and production
+// Always use PostgreSQL ï¿½ Npgsql for both local and production
 // For local development set SUPABASE_CONNECTION in your environment
 // For production Railway sets SUPABASE_CONNECTION automatically
 if (!string.IsNullOrEmpty(supabaseConnection))
@@ -28,6 +29,10 @@ else
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(localConnection));
 }
+
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<ApplicationDbContext>()
+    .SetApplicationName("beautix_bisp_17005");
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -77,7 +82,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
