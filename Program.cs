@@ -7,26 +7,21 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Read DATABASE_URL environment variable if present (Railway + Supabase)
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-if (!string.IsNullOrEmpty(databaseUrl))
-{
-    builder.Configuration["ConnectionStrings:DefaultConnection"] = databaseUrl;
-}
+// Read SUPABASE_CONNECTION environment variable if present (Railway + Supabase)
+var supabaseConnection = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
 
-// Database — PostgreSQL for production (Supabase), SQL Server for local
-var connectionString = builder.Configuration
-    .GetConnectionString("DefaultConnection")!;
-
-if (!string.IsNullOrEmpty(databaseUrl))
+if (!string.IsNullOrEmpty(supabaseConnection))
 {
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString));
+        options.UseNpgsql(supabaseConnection));
 }
 else
 {
+    var localConnection = builder.Configuration
+        .GetConnectionString("DefaultConnection")!;
+
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString));
+        options.UseSqlServer(localConnection));
 }
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
