@@ -62,14 +62,18 @@ namespace beautix_bisp_17005.Services
                 SalonName = service.Salon.Name,
                 CreditsRequired = service.CreditsRequired,
                 DurationMinutes = service.DurationMinutes,
-                AppointmentDate = DateTime.Now.AddDays(1)
+                AppointmentDate = DateTime.UtcNow.AddDays(1)
             };
         }
 
         public async Task<(bool Success, string Message)> CreateBookingAsync(
             string userId, int serviceId, DateTime appointmentDate)
         {
-            if (appointmentDate < DateTime.Now)
+            // Treat user-submitted local time as UTC for consistent timestamptz storage/comparison
+            if (appointmentDate.Kind != DateTimeKind.Utc)
+                appointmentDate = DateTime.SpecifyKind(appointmentDate, DateTimeKind.Utc);
+
+            if (appointmentDate < DateTime.UtcNow)
                 return (false, "Appointment date must be in the future.");
 
             var service = await _context.Services
@@ -134,7 +138,7 @@ namespace beautix_bisp_17005.Services
                     Status = b.Status,
                     CreditsRequired = b.Service != null ? b.Service.CreditsRequired : 0,
                     CanCancel = b.Status == BookingStatus.Confirmed &&
-                                b.AppointmentDate > DateTime.Now.AddHours(24)
+                                b.AppointmentDate > DateTime.UtcNow.AddHours(24)
                 })
                 .ToListAsync();
         }
@@ -152,7 +156,7 @@ namespace beautix_bisp_17005.Services
             if (booking.Status != BookingStatus.Confirmed)
                 return (false, "Only confirmed bookings can be cancelled.");
 
-            if (booking.AppointmentDate <= DateTime.Now.AddHours(24))
+            if (booking.AppointmentDate <= DateTime.UtcNow.AddHours(24))
                 return (false, "Bookings cannot be cancelled within 24 hours of the appointment.");
 
             booking.Status = BookingStatus.Cancelled;
