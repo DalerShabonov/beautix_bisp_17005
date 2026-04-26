@@ -12,7 +12,7 @@ using beautix_bisp_17005.Data;
 namespace beautix_bisp_17005.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260426180220_InitialCreate")]
+    [Migration("20260426184930_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -292,7 +292,7 @@ namespace beautix_bisp_17005.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -328,14 +328,14 @@ namespace beautix_bisp_17005.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<int>("SalonId")
                         .HasColumnType("int");
@@ -360,10 +360,10 @@ namespace beautix_bisp_17005.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<decimal>("MonthlyPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -415,7 +415,7 @@ namespace beautix_bisp_17005.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PaymentStatus")
                         .IsRequired()

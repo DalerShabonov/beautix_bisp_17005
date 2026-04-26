@@ -62,9 +62,9 @@ namespace beautix_bisp_17005.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MonthlyPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MonthlyPrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     ServiceAllowance = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,7 +189,7 @@ namespace beautix_bisp_17005.Migrations
                     ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsApproved = table.Column<bool>(type: "bit", nullable: false),
+                    IsApproved = table.Column<bool>(type: "boolean", nullable: false),
                     OwnerUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -214,7 +214,7 @@ namespace beautix_bisp_17005.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RenewalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ServicesUsed = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -244,8 +244,8 @@ namespace beautix_bisp_17005.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DurationMinutes = table.Column<int>(type: "int", nullable: false),
                     CreditsRequired = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "boolean", nullable: false),
                     SalonId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
