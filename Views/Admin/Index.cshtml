@@ -1,199 +1,202 @@
-﻿@model beautix_bisp_17005.ViewModels.AdminDashboardViewModel
+@model beautix_bisp_17005.ViewModels.AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Admin Panel";
 }
 
-<div class="container py-5">
-    <h1 class="fw-semibold mb-4">Admin Dashboard</h1>
+<div class="section-padding">
+    <div class="container">
+        <h2 class="fw-bold mb-1">Admin Panel</h2>
+        <p class="text-muted mb-4">Platform overview and management.</p>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
 
-    {{!-- Platform stats --}}
-    <div class="row g-3 mb-5">
-        <div class="col-md-3">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Total users</p>
-                    <h2 class="fw-bold mb-0">@Model.TotalUsers</h2>
-                    <p class="text-muted small mt-1 mb-0">
-                        @Model.TotalSubscribers subscribers &middot;
-                        @Model.TotalSalonPartners partners
-                    </p>
+        @* Stats *@
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card-beautix p-4 d-flex align-items-center gap-3">
+                    <div class="feature-icon mb-0" style="width:56px;height:56px;">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">@Model.TotalUsers</h3>
+                        <small class="text-muted">@Model.TotalSubscribers subscribers &middot; @Model.TotalSalonPartners partners</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-beautix p-4 d-flex align-items-center gap-3">
+                    <div class="feature-icon mb-0" style="width:56px;height:56px;">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">@Model.TotalSalons</h3>
+                        <small class="text-muted">
+                            @Model.ApprovedSalons approved &middot;
+                            @if (Model.PendingSalons > 0)
+                            {
+                                <span class="text-warning fw-semibold">@Model.PendingSalons pending</span>
+                            }
+                            else
+                            {
+                                <span>0 pending</span>
+                            }
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-beautix p-4 d-flex align-items-center gap-3">
+                    <div class="feature-icon mb-0" style="width:56px;height:56px;">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">@Model.TotalBookings</h3>
+                        <small class="text-muted">@Model.ConfirmedBookings confirmed &middot; @Model.CancelledBookings cancelled</small>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Active subscriptions</p>
-                    <h2 class="fw-bold mb-0">@Model.TotalActiveSubscriptions</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Simulated revenue</p>
-                    <h2 class="fw-bold mb-0">
-                        $@Model.TotalSimulatedRevenue.ToString("N0")
-                    </h2>
-                    <p class="text-muted small mt-1 mb-0">this billing cycle</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Total bookings</p>
-                    <h2 class="fw-bold mb-0">@Model.TotalBookings</h2>
-                    <p class="text-muted small mt-1 mb-0">
-                        @Model.ConfirmedBookings confirmed &middot;
-                        @Model.CancelledBookings cancelled
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row g-3 mb-5">
-        <div class="col-md-3">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Partner salons</p>
-                    <h2 class="fw-bold mb-0">@Model.TotalSalons</h2>
-                    <p class="text-muted small mt-1 mb-0">
-                        @Model.ApprovedSalons approved &middot;
-                        @if (Model.PendingSalons > 0)
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="card-beautix p-4 d-flex align-items-center gap-3">
+                    <div class="feature-icon mb-0" style="width:56px;height:56px;">
+                        <i class="bi bi-gem"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">@Model.TotalActiveSubscriptions</h3>
+                        <small class="text-muted">Active subscriptions</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card-beautix p-4 d-flex align-items-center gap-3">
+                    <div class="feature-icon mb-0" style="width:56px;height:56px;">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold mb-0">$@Model.TotalSimulatedRevenue.ToString("N0")</h3>
+                        <small class="text-muted">Simulated revenue this billing cycle</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Quick actions *@
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="card-beautix h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-3">Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <a asp-action="Users" asp-controller="Admin" class="btn btn-light text-start d-flex align-items-center gap-3 py-3">
+                                <div class="feature-icon mb-0" style="width:40px;height:40px;font-size:1rem;"><i class="bi bi-people"></i></div>
+                                <div>
+                                    <div class="fw-semibold">Manage Users</div>
+                                    <small class="text-muted">View and manage user accounts</small>
+                                </div>
+                                <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                            </a>
+                            <a asp-action="Salons" asp-controller="Admin" class="btn btn-light text-start d-flex align-items-center gap-3 py-3">
+                                <div class="feature-icon mb-0" style="width:40px;height:40px;font-size:1rem;"><i class="bi bi-shop"></i></div>
+                                <div>
+                                    <div class="fw-semibold">Manage Salons</div>
+                                    <small class="text-muted">Approve and manage salon partners</small>
+                                </div>
+                                <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card-beautix h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Recent Users</h5>
+                            <a asp-action="Users" class="btn btn-sm btn-light">View all</a>
+                        </div>
+                        @if (!Model.RecentUsers.Any())
                         {
-                            <span class="text-warning fw-semibold">
-                                @Model.PendingSalons pending
-                            </span>
+                            <p class="text-muted small mb-0">No users yet.</p>
                         }
                         else
                         {
-                            <span>0 pending</span>
+                            <div class="d-flex flex-column gap-3">
+                                @foreach (var user in Model.RecentUsers)
+                                {
+                                    <div class="d-flex align-items-center gap-3 pb-3 border-bottom">
+                                        <div class="avatar-circle flex-shrink-0">@(string.IsNullOrEmpty(user.FullName) ? "?" : user.FullName[0].ToString())</div>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <div class="small fw-semibold text-truncate">@user.FullName</div>
+                                            <div class="small text-muted text-truncate">@user.Email &bull; @user.RegisteredAt.ToString("dd MMM yyyy")</div>
+                                        </div>
+                                        <span class="badge bg-light text-dark">@user.Role</span>
+                                    </div>
+                                }
+                            </div>
                         }
-                    </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    {{!-- Pending salons --}}
-    @if (Model.PendingSalonList.Any())
-    {
-        <div class="mb-5">
+        @* Pending salons *@
+        @if (Model.PendingSalonList.Any())
+        {
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="fw-semibold mb-0">
+                <h4 class="fw-bold mb-0">
                     Salons awaiting approval
-                    <span class="badge bg-warning text-dark ms-2">
-                        @Model.PendingSalonList.Count
-                    </span>
-                </h3>
-                <a asp-action="Salons" class="btn btn-sm btn-outline-secondary">
-                    View all salons
-                </a>
+                    <span class="badge bg-warning text-dark ms-2">@Model.PendingSalonList.Count</span>
+                </h4>
+                <a asp-action="Salons" class="btn btn-sm btn-light">View all salons</a>
             </div>
-            <div class="card shadow-sm">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Salon</th>
-                                <th>Owner</th>
-                                <th>District</th>
-                                <th>Services</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var salon in Model.PendingSalonList)
-                            {
+            <div class="card-beautix">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <td class="align-middle">
-                                        <strong>@salon.SalonName</strong>
-                                    </td>
-                                    <td class="align-middle">
-                                        @salon.OwnerName
-                                        <br />
-                                        <small class="text-muted">
-                                            @salon.OwnerEmail
-                                        </small>
-                                    </td>
-                                    <td class="align-middle">@salon.District</td>
-                                    <td class="align-middle">@salon.TotalServices</td>
-                                    <td class="align-middle text-end">
-                                        <form asp-action="ApproveSalon"
-                                              method="post" class="d-inline">
-                                            <input type="hidden" name="salonId"
-                                                   value="@salon.SalonId" />
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-success">
-                                                Approve
-                                            </button>
-                                        </form>
-                                    </td>
+                                    <th class="ps-4">Salon</th>
+                                    <th>Owner</th>
+                                    <th>District</th>
+                                    <th>Services</th>
+                                    <th class="pe-4"></th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var salon in Model.PendingSalonList)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-semibold">@salon.SalonName</td>
+                                        <td>
+                                            @salon.OwnerName
+                                            <br /><small class="text-muted">@salon.OwnerEmail</small>
+                                        </td>
+                                        <td>@salon.District</td>
+                                        <td>@salon.TotalServices</td>
+                                        <td class="pe-4 text-end">
+                                            <form asp-action="ApproveSalon" method="post" class="d-inline">
+                                                <input type="hidden" name="salonId" value="@salon.SalonId" />
+                                                <button type="submit" class="btn btn-sm btn-success btn-pill">
+                                                    <i class="bi bi-check-lg me-1"></i>Approve
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
-
-    {{!-- Recent users --}}
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="fw-semibold mb-0">Recent users</h3>
-        <a asp-action="Users" class="btn btn-sm btn-outline-secondary">
-            View all users
-        </a>
-    </div>
-    <div class="card shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Registered</th>
-                        <th>Subscription</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in Model.RecentUsers)
-                    {
-                        <tr>
-                            <td class="align-middle">@user.FullName</td>
-                            <td class="align-middle text-muted">@user.Email</td>
-                            <td class="align-middle">
-                                <span class="badge bg-secondary">@user.Role</span>
-                            </td>
-                            <td class="align-middle">
-                                @user.RegisteredAt.ToString("dd MMM yyyy")
-                            </td>
-                            <td class="align-middle">
-                                @if (user.HasActiveSubscription)
-                                {
-                                    <span class="badge bg-success">Active</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-light text-dark">None</span>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+        }
     </div>
 </div>

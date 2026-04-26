@@ -1,261 +1,251 @@
-﻿@model beautix_bisp_17005.ViewModels.SalonDashboardViewModel
+@model beautix_bisp_17005.ViewModels.SalonDashboardViewModel
 @{
     ViewData["Title"] = "Salon Dashboard";
 }
 
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-start mb-4">
-        <div>
-            <h1 class="fw-semibold mb-1">@Model.SalonName</h1>
-            <p class="text-muted mb-0">
-                @Model.District &mdash; @Model.Address
-            </p>
-        </div>
-        <a asp-action="Edit" class="btn btn-outline-secondary btn-sm">
-            Edit Details
-        </a>
-    </div>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-
-    @if (!Model.IsApproved)
-    {
-        <div class="alert alert-warning">
-            <strong>Pending approval.</strong>
-            Your salon is currently under review by the Beautix team.
-            You can add services in the meantime — they will go live
-            once your salon is approved.
-        </div>
-    }
-
-    {{!-- Stats row --}}
-    <div class="row g-3 mb-5">
-        <div class="col-md-4">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Total bookings</p>
-                    <h2 class="fw-bold mb-0">@Model.TotalBookings</h2>
-                </div>
+<div class="section-padding">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">@Model.SalonName</h2>
+                <p class="text-muted mb-0"><i class="bi bi-geo-alt me-1"></i>@Model.District &mdash; @Model.Address</p>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Confirmed bookings</p>
-                    <h2 class="fw-bold mb-0">@Model.ConfirmedBookings</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 bg-light h-100">
-                <div class="card-body p-4">
-                    <p class="text-muted small mb-1">Today's bookings</p>
-                    <h2 class="fw-bold mb-0">@Model.TodaysBookings</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{!-- Services section --}}
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="fw-semibold mb-0">Services</h3>
-    </div>
-
-    <div class="card shadow-sm mb-5">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0">Add a new service</h5>
-        </div>
-        <div class="card-body">
-            <form asp-action="AddService" method="post">
-                <input type="hidden" name="salonId" value="@Model.SalonId" />
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label">Service Name</label>
-                        <input name="Name" class="form-control"
-                               placeholder="e.g. Gel Manicure" required />
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Description</label>
-                        <input name="Description" class="form-control"
-                               placeholder="Brief description" />
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Duration (min)</label>
-                        <input name="DurationMinutes" type="number"
-                               class="form-control" value="60"
-                               min="10" max="480" required />
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Credits Required</label>
-                        <select name="CreditsRequired" class="form-select">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Price ($)</label>
-                        <input name="Price" type="number" step="0.01"
-                               class="form-control" placeholder="45.00"
-                               min="0.01" required />
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary mt-3">
-                    Add Service
-                </button>
-            </form>
+            <a asp-action="Edit" class="btn btn-light btn-pill">
+                <i class="bi bi-pencil me-1"></i>Edit Details
+            </a>
         </div>
 
-        @if (Model.Services.Any())
+        @if (TempData["Success"] != null)
         {
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Service</th>
-                            <th>Duration</th>
-                            <th>Credits</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var service in Model.Services)
-                        {
-                            <tr>
-                                <td class="align-middle">
-                                    <strong>@service.Name</strong>
-                                    @if (!string.IsNullOrEmpty(service.Description))
-                                    {
-                                        <br />
-                                        <small class="text-muted">
-                                            @service.Description
-                                        </small>
-                                    }
-                                </td>
-                                <td class="align-middle">
-                                    @service.DurationMinutes min
-                                </td>
-                                <td class="align-middle">
-                                    <span class="badge bg-primary">
-                                        @service.CreditsRequired
-                                    </span>
-                                </td>
-                                <td class="align-middle">
-                                    $@service.Price
-                                </td>
-                                <td class="align-middle">
-                                    @if (service.IsAvailable)
-                                    {
-                                        <span class="badge bg-success">Available</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">Hidden</span>
-                                    }
-                                </td>
-                                <td class="align-middle text-end">
-                                    <form asp-action="ToggleService"
-                                          method="post" class="d-inline">
-                                        <input type="hidden" name="serviceId"
-                                               value="@service.ServiceId" />
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-secondary me-1">
-                                            @(service.IsAvailable ? "Hide" : "Show")
-                                        </button>
-                                    </form>
-                                    <form asp-action="DeleteService"
-                                          method="post" class="d-inline"
-                                          onsubmit="return confirm('Delete this service?');">
-                                        <input type="hidden" name="serviceId"
-                                               value="@service.ServiceId" />
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @if (!Model.IsApproved)
+        {
+            <div class="card-beautix p-4 mb-4" style="border-left:4px solid #f59e0b;">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-clock-history text-warning" style="font-size:1.5rem;"></i>
+                    <div>
+                        <strong>Pending approval.</strong>
+                        <span class="text-muted">Your salon is currently under review by the Beautix team. You can add services in the meantime — they will go live once your salon is approved.</span>
+                    </div>
+                </div>
             </div>
         }
-        else
-        {
-            <div class="p-3 text-muted small">
-                No services added yet. Use the form above to add your first service.
-            </div>
-        }
-    </div>
 
-    {{!-- Recent bookings --}}
-    <h3 class="fw-semibold mb-3">Recent Bookings</h3>
-    @if (!Model.RecentBookings.Any())
-    {
-        <div class="card border-0 bg-light p-4 text-center">
-            <p class="text-muted mb-0">
-                No bookings yet. Bookings will appear here
-                once your salon is approved and live.
-            </p>
-        </div>
-    }
-    else
-    {
-        <div class="card shadow-sm">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Customer</th>
-                            <th>Service</th>
-                            <th>Date &amp; Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var booking in Model.RecentBookings)
-                        {
-                            <tr>
-                                <td class="align-middle">
-                                    @booking.CustomerName
-                                </td>
-                                <td class="align-middle">
-                                    @booking.ServiceName
-                                </td>
-                                <td class="align-middle">
-                                    @booking.AppointmentDate
-                                        .ToString("dd MMM yyyy, HH:mm")
-                                </td>
-                                <td class="align-middle">
-                                    @{
-                                        var badge = booking.Status switch
-                                        {
-                                            "Confirmed" => "bg-success",
-                                            "Cancelled" => "bg-secondary",
-                                            "Completed" => "bg-primary",
-                                            _ => "bg-light text-dark"
-                                        };
-                                    }
-                                    <span class="badge @badge">
-                                        @booking.Status
-                                    </span>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+        @* Stats *@
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card-beautix p-4 text-center">
+                    <div class="feature-icon mx-auto mb-2" style="width:48px;height:48px;font-size:1.25rem;">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h3 class="fw-bold mb-0">@Model.TodaysBookings</h3>
+                    <small class="text-muted">Today's Bookings</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-beautix p-4 text-center">
+                    <div class="feature-icon mx-auto mb-2" style="width:48px;height:48px;font-size:1.25rem;">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <h3 class="fw-bold mb-0">@Model.ConfirmedBookings</h3>
+                    <small class="text-muted">Confirmed Bookings</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-beautix p-4 text-center">
+                    <div class="feature-icon mx-auto mb-2" style="width:48px;height:48px;font-size:1.25rem;">
+                        <i class="bi bi-list-check"></i>
+                    </div>
+                    <h3 class="fw-bold mb-0">@Model.TotalBookings</h3>
+                    <small class="text-muted">Total Bookings</small>
+                </div>
             </div>
         </div>
-    }
+
+        @* Add service form *@
+        <div class="card-beautix mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Add a New Service</h5>
+                <form asp-action="AddService" method="post">
+                    <input type="hidden" name="salonId" value="@Model.SalonId" />
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input name="Name" class="form-control" placeholder="Service Name" required />
+                                <label>Service Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-floating">
+                                <input name="Description" class="form-control" placeholder="Description" />
+                                <label>Description</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input name="DurationMinutes" type="number" class="form-control" value="60" min="10" max="480" required />
+                                <label>Duration (min)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <select name="CreditsRequired" class="form-select">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
+                                <label>Credits</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-floating">
+                                <input name="Price" type="number" step="0.01" class="form-control" placeholder="45.00" min="0.01" required />
+                                <label>Price ($)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-pill mt-3">
+                        <i class="bi bi-plus-lg me-2"></i>Add Service
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        @* Services list *@
+        <h5 class="fw-bold mb-3">My Services</h5>
+        <div class="card-beautix mb-5">
+            <div class="card-body p-0">
+                @if (!Model.Services.Any())
+                {
+                    <div class="p-4 text-center">
+                        <p class="text-muted mb-0">No services added yet. Use the form above to add your first service.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Service</th>
+                                    <th>Duration</th>
+                                    <th>Credits</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th class="pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var service in Model.Services)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <strong>@service.Name</strong>
+                                            @if (!string.IsNullOrEmpty(service.Description))
+                                            {
+                                                <br /><small class="text-muted">@service.Description</small>
+                                            }
+                                        </td>
+                                        <td>@service.DurationMinutes min</td>
+                                        <td><span class="badge bg-primary">@service.CreditsRequired</span></td>
+                                        <td class="fw-semibold">$@service.Price</td>
+                                        <td>
+                                            @if (service.IsAvailable)
+                                            {
+                                                <span class="badge bg-success">Available</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Hidden</span>
+                                            }
+                                        </td>
+                                        <td class="pe-4">
+                                            <form asp-action="ToggleService" method="post" class="d-inline">
+                                                <input type="hidden" name="serviceId" value="@service.ServiceId" />
+                                                <button type="submit" class="btn btn-sm btn-light" title="@(service.IsAvailable ? "Hide" : "Show")">
+                                                    <i class="bi @(service.IsAvailable ? "bi-eye-slash" : "bi-eye")"></i>
+                                                </button>
+                                            </form>
+                                            <form asp-action="DeleteService" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Delete this service?');">
+                                                <input type="hidden" name="serviceId" value="@service.ServiceId" />
+                                                <button type="submit" class="btn btn-sm btn-light text-danger" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* Recent bookings *@
+        <h5 class="fw-bold mb-3">Recent Bookings</h5>
+        <div class="card-beautix">
+            <div class="card-body p-0">
+                @if (!Model.RecentBookings.Any())
+                {
+                    <div class="p-4 text-center">
+                        <p class="text-muted mb-0">No bookings yet. Bookings will appear here once your salon is approved and live.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Customer</th>
+                                    <th>Service</th>
+                                    <th>Date & Time</th>
+                                    <th class="pe-4">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var booking in Model.RecentBookings)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="avatar-circle" style="width:32px;height:32px;font-size:0.75rem;">
+                                                    @(string.IsNullOrEmpty(booking.CustomerName) ? "?" : booking.CustomerName[0].ToString())
+                                                </div>
+                                                <span class="fw-semibold">@booking.CustomerName</span>
+                                            </div>
+                                        </td>
+                                        <td>@booking.ServiceName</td>
+                                        <td class="text-muted small">@booking.AppointmentDate.ToString("dd MMM yyyy, HH:mm")</td>
+                                        <td class="pe-4">
+                                            @{
+                                                var badge = booking.Status switch
+                                                {
+                                                    "Confirmed" => "bg-success",
+                                                    "Cancelled" => "bg-secondary",
+                                                    "Completed" => "bg-primary",
+                                                    _ => "bg-light text-dark"
+                                                };
+                                            }
+                                            <span class="badge @badge">@booking.Status</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

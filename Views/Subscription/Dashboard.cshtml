@@ -1,99 +1,152 @@
-﻿@model beautix_bisp_17005.ViewModels.SubscriptionDashboardViewModel
+@model beautix_bisp_17005.ViewModels.SubscriptionDashboardViewModel
 @{
     ViewData["Title"] = "My Subscription";
 }
 
-<div class="container py-5">
-    <h1 class="fw-semibold mb-4">My Subscription</h1>
+<div class="section-padding">
+    <div class="container">
+        <h2 class="fw-bold mb-1">My Subscription</h2>
+        <p class="text-muted mb-4">Manage your subscription and bookings.</p>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
 
-    @if (!Model.HasActiveSubscription)
-    {
-        <div class="card border-0 bg-light p-4 text-center">
-            <h4 class="mb-3">You do not have an active subscription</h4>
-            <p class="text-muted mb-4">
-                Choose a plan to start booking beauty services
-                across our partner salon network.
-            </p>
-            <a asp-action="Plans" class="btn btn-primary px-4">View Plans</a>
-        </div>
-    }
-    else
-    {
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 border-0 bg-light">
-                    <div class="card-body p-4">
-                        <p class="text-muted small mb-1">Current plan</p>
-                        <h3 class="fw-bold">@Model.PlanName</h3>
-                        <p class="fs-4 fw-semibold mb-0">$@Model.MonthlyPrice
-                            <span class="fs-6 text-muted fw-normal">/ month</span>
-                        </p>
-                    </div>
+        @if (!Model.HasActiveSubscription)
+        {
+            <div class="card-beautix p-5 text-center">
+                <div class="feature-icon mx-auto mb-3" style="width:64px;height:64px;font-size:2rem;">
+                    <i class="bi bi-gem"></i>
+                </div>
+                <h4 class="fw-bold mb-2">No Active Subscription</h4>
+                <p class="text-muted mb-4 mx-auto" style="max-width:400px;">
+                    Choose a plan to start booking beauty services across our partner salon network.
+                </p>
+                <div>
+                    <a asp-action="Plans" class="btn btn-primary btn-pill px-4">
+                        <i class="bi bi-arrow-right-circle me-2"></i>View Plans
+                    </a>
                 </div>
             </div>
+        }
+        else
+        {
+            <div class="row g-4 mb-5">
+                <div class="col-lg-4">
+                    <div class="card-beautix p-4 text-center" style="border:2px solid var(--bx-primary);">
+                        <span class="badge badge-premium mb-3" style="align-self:center;">Current Plan</span>
+                        <h3 class="fw-bold">@Model.PlanName</h3>
+                        <div class="my-3">
+                            <span class="display-5 fw-bold text-gradient">$@Model.MonthlyPrice</span><span class="text-muted">/mo</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            Renews on @Model.RenewalDate.ToString("dd MMM yyyy")
+                            <br />
+                            <span class="badge bg-success mt-1">@Model.PaymentStatus</span>
+                        </p>
+                        <p class="text-muted small mb-4">Started @Model.StartDate.ToString("dd MMM yyyy")</p>
+                        <div class="d-grid gap-2">
+                            <a asp-action="Plans" class="btn btn-primary btn-pill">Change Plan</a>
+                            <a asp-controller="Booking" asp-action="Browse" class="btn btn-light btn-pill">
+                                <i class="bi bi-calendar-check me-1"></i>Book a Service
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="col-md-4">
-                <div class="card h-100 border-0 bg-light">
-                    <div class="card-body p-4">
-                        <p class="text-muted small mb-1">Services this month</p>
-                        @if (Model.IsUnlimited)
-                        {
-                            <h3 class="fw-bold">@Model.ServicesUsed used</h3>
-                            <p class="text-muted mb-0">Unlimited plan — no cap</p>
-                        }
-                        else
-                        {
-                            <h3 class="fw-bold">
-                                @Model.ServicesRemaining remaining
-                            </h3>
-                            <div class="progress mt-2" style="height: 8px;">
-                                @{
-                                    var pct = Model.ServiceAllowance > 0
-                                        ? (int)((double)Model.ServicesUsed / Model.ServiceAllowance * 100)
-                                        : 0;
-                                }
-                                <div class="progress-bar bg-primary"
-                                     style="width: @pct%"
-                                     role="progressbar"
-                                     aria-valuenow="@pct"
-                                     aria-valuemin="0"
-                                     aria-valuemax="100">
+                <div class="col-lg-8">
+                    <div class="card-beautix h-100">
+                        <div class="card-body">
+                            <h5 class="fw-bold mb-4">Usage This Month</h5>
+
+                            @if (Model.IsUnlimited)
+                            {
+                                <div class="d-flex align-items-center gap-3 p-4 bg-soft rounded-3 mb-4">
+                                    <div class="feature-icon mb-0" style="width:48px;height:48px;font-size:1.25rem;">
+                                        <i class="bi bi-infinity"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="fw-bold mb-0">@Model.ServicesUsed services used</h4>
+                                        <small class="text-muted">Unlimited plan — book as many services as you'd like</small>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                var pct = Model.ServiceAllowance > 0
+                                    ? (int)((double)Model.ServicesUsed / Model.ServiceAllowance * 100)
+                                    : 0;
+                                <div class="p-4 bg-soft rounded-3 mb-4">
+                                    <div class="d-flex justify-content-between align-items-end mb-2">
+                                        <div>
+                                            <h4 class="fw-bold mb-0">@Model.ServicesRemaining remaining</h4>
+                                            <small class="text-muted">@Model.ServicesUsed of @Model.ServiceAllowance used</small>
+                                        </div>
+                                        <span class="fw-semibold text-primary">@pct%</span>
+                                    </div>
+                                    <div class="progress" style="height:10px;border-radius:8px;">
+                                        <div class="progress-bar bg-primary"
+                                             style="width:@pct%;border-radius:8px;"
+                                             role="progressbar"
+                                             aria-valuenow="@pct"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            }
+
+                            <h5 class="fw-bold mb-3">Plan Benefits</h5>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center gap-3 p-3 bg-soft rounded-3">
+                                        <div class="feature-icon mb-0" style="width:40px;height:40px;font-size:1rem;">
+                                            <i class="bi bi-shop"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">All Partner Salons</div>
+                                            <small class="text-muted">Access full network</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center gap-3 p-3 bg-soft rounded-3">
+                                        <div class="feature-icon mb-0" style="width:40px;height:40px;font-size:1rem;">
+                                            <i class="bi bi-calendar-check"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Online Booking</div>
+                                            <small class="text-muted">Book any time</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center gap-3 p-3 bg-soft rounded-3">
+                                        <div class="feature-icon mb-0" style="width:40px;height:40px;font-size:1rem;">
+                                            <i class="bi bi-x-circle"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Free Cancellation</div>
+                                            <small class="text-muted">Up to 24h before</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center gap-3 p-3 bg-soft rounded-3">
+                                        <div class="feature-icon mb-0" style="width:40px;height:40px;font-size:1rem;">
+                                            <i class="bi bi-journal-bookmark"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Booking History</div>
+                                            <small class="text-muted">Track past visits</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <p class="text-muted small mt-1 mb-0">
-                                @Model.ServicesUsed of @Model.ServiceAllowance used
-                            </p>
-                        }
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4">
-                <div class="card h-100 border-0 bg-light">
-                    <div class="card-body p-4">
-                        <p class="text-muted small mb-1">Renewal date</p>
-                        <h3 class="fw-bold">@Model.RenewalDate.ToString("dd MMM yyyy")</h3>
-                        <p class="text-muted mb-0 small">
-                            Started @Model.StartDate.ToString("dd MMM yyyy")
-                        </p>
-                        <span class="badge bg-success mt-2">@Model.PaymentStatus</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-4 d-flex gap-3">
-            <a asp-controller="Booking" asp-action="Browse" class="btn btn-primary">
-                Book a Service
-            </a>
-            <a asp-action="Plans" class="btn btn-outline-secondary">
-                Change Plan
-            </a>
-        </div>
-    }
+        }
+    </div>
 </div>

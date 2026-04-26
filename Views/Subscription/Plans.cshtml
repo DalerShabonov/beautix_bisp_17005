@@ -1,65 +1,75 @@
-﻿
 @model List<beautix_bisp_17005.ViewModels.SubscriptionPlanViewModel>
 @{
-    ViewData["Title"] = "Choose Your Plan";
+    ViewData["Title"] = "Subscription Plans";
+    var sortedPlans = Model.OrderBy(p => p.MonthlyPrice).ToList();
+    var midPriceId = sortedPlans.Count > 1 ? sortedPlans[sortedPlans.Count / 2].Id : 0;
 }
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-semibold">Choose your Beautix plan</h1>
-        <p class="text-muted fs-5">
-            Subscribe once. Book beauty services across our partner salon network all month.
-        </p>
+<section class="hero-section" style="padding:4rem 0;">
+    <div class="container text-center">
+        <h2 class="fw-bold">Choose Your <span class="text-gradient">Plan</span></h2>
+        <p class="text-muted mx-auto" style="max-width:500px;">Subscribe once. Book beauty services across our partner salon network all month.</p>
     </div>
+</section>
 
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-
-    <div class="row justify-content-center g-4">
-        @foreach (var plan in Model)
+<section class="section-padding pt-0">
+    <div class="container">
+        @if (TempData["Error"] != null)
         {
-            <div class="col-md-4">
-                <div class="card h-100 @(plan.IsCurrentPlan ? "border-primary border-2" : "")">
-                    @if (plan.IsCurrentPlan)
-                    {
-                        <div class="card-header bg-primary text-white text-center small fw-semibold">
-                            Your current plan
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <div class="row g-4 justify-content-center">
+            @foreach (var plan in sortedPlans)
+            {
+                var isPopular = plan.Id == midPriceId && sortedPlans.Count >= 3;
+                var isHighlighted = plan.IsCurrentPlan || isPopular;
+                <div class="col-md-6 col-lg-4">
+                    <div class="card-beautix h-100 p-4 position-relative" style="@(isHighlighted ? "border:2px solid var(--bx-primary);" : "")">
+                        @if (plan.IsCurrentPlan)
+                        {
+                            <span class="badge badge-premium position-absolute" style="top:-12px;left:50%;transform:translateX(-50%);">Current Plan</span>
+                        }
+                        else if (isPopular)
+                        {
+                            <span class="badge badge-premium position-absolute" style="top:-12px;left:50%;transform:translateX(-50%);">Most Popular</span>
+                        }
+                        <div class="text-center mb-4">
+                            <h5 class="fw-semibold @(isHighlighted ? "" : "text-muted")" style="@(isHighlighted ? "color:var(--bx-primary);" : "")">@plan.Name</h5>
+                            <div class="my-3">
+                                <span class="display-4 fw-bold @(isHighlighted ? "text-gradient" : "")">$@plan.MonthlyPrice</span><span class="text-muted">/mo</span>
+                            </div>
+                            <p class="text-muted small">@plan.Description</p>
                         </div>
-                    }
-                    <div class="card-body d-flex flex-column p-4">
-                        <h3 class="card-title">@plan.Name</h3>
-                        <div class="my-3">
-                            <span class="fs-2 fw-bold">$@plan.MonthlyPrice</span>
-                            <span class="text-muted">/ month</span>
-                        </div>
-                        <p class="text-muted">@plan.Description</p>
                         <ul class="list-unstyled mb-4">
                             <li class="mb-2">
-                                &#10003;
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
                                 @(plan.ServiceAllowance == 999
                                     ? "Unlimited services per month"
                                     : $"{plan.ServiceAllowance} services per month")
                             </li>
-                            <li class="mb-2">&#10003; Access to all partner salons</li>
-                            <li class="mb-2">&#10003; Online booking and cancellation</li>
-                            <li class="mb-2">&#10003; Booking history and dashboard</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Access to all partner salons</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Online booking and cancellation</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Booking history and dashboard</li>
+                            @if (plan.ServiceAllowance == 999)
+                            {
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Priority booking</li>
+                            }
                         </ul>
                         <div class="mt-auto">
                             @if (User.Identity!.IsAuthenticated && User.IsInRole("Subscriber"))
                             {
                                 if (plan.IsCurrentPlan)
                                 {
-                                    <button class="btn btn-outline-primary w-100" disabled>
-                                        Current plan
+                                    <button class="btn btn-outline-primary w-100 btn-pill" disabled>
+                                        <i class="bi bi-check2 me-2"></i>Current Plan
                                     </button>
                                 }
                                 else
                                 {
                                     <form asp-action="Activate" method="post">
                                         <input type="hidden" name="planId" value="@plan.Id" />
-                                        <button type="submit" class="btn btn-primary w-100">
+                                        <button type="submit" class="btn @(isPopular ? "btn-primary" : "btn-outline-primary") w-100 btn-pill">
                                             @(plan.MonthlyPrice > 100 ? "Upgrade" : "Select Plan")
                                         </button>
                                     </form>
@@ -67,15 +77,20 @@
                             }
                             else if (!User.Identity!.IsAuthenticated)
                             {
-                                <a asp-controller="Account" asp-action="Register"
-                                   class="btn btn-primary w-100">
+                                <a asp-controller="Account" asp-action="Register" class="btn @(isPopular ? "btn-primary" : "btn-outline-primary") w-100 btn-pill">
                                     Get Started
                                 </a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-light w-100 btn-pill" disabled>
+                                    Subscribers only
+                                </button>
                             }
                         </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
-</div>
+</section>

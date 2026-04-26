@@ -1,41 +1,40 @@
-﻿@model beautix_bisp_17005.ViewModels.BookingCreateViewModel
+@model beautix_bisp_17005.ViewModels.BookingCreateViewModel
 @{
     ViewData["Title"] = "Confirm Booking";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <h2 class="card-title mb-1">Confirm your booking</h2>
-                    <p class="text-muted mb-4">
-                        Review the details below and choose your appointment time.
-                    </p>
+<div class="section-padding">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card-beautix p-4 p-md-5 animate-fade-in">
+                    <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                        <div style="width:64px;height:64px;background:linear-gradient(135deg,#ffe4e6,#fecdd3);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi bi-shop text-primary" style="font-size:1.75rem;"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-1">@Model.SalonName</h4>
+                            <p class="text-muted mb-0"><i class="bi bi-stars me-1"></i>Confirm your appointment</p>
+                        </div>
+                    </div>
 
-                    <div asp-validation-summary="ModelOnly"
-                         class="alert alert-danger" role="alert"></div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
-                    <div class="bg-light rounded p-3 mb-4">
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <p class="text-muted small mb-1">Salon</p>
-                                <p class="fw-semibold mb-0">@Model.SalonName</p>
-                            </div>
+                    <h5 class="fw-bold mb-3">Service Details</h5>
+                    <div class="bg-soft rounded-3 p-4 mb-4">
+                        <div class="row g-3">
                             <div class="col-6">
                                 <p class="text-muted small mb-1">Service</p>
                                 <p class="fw-semibold mb-0">@Model.ServiceName</p>
                             </div>
                             <div class="col-6">
                                 <p class="text-muted small mb-1">Duration</p>
-                                <p class="fw-semibold mb-0">@Model.DurationMinutes minutes</p>
+                                <p class="fw-semibold mb-0"><i class="bi bi-clock me-1"></i>@Model.DurationMinutes minutes</p>
                             </div>
                             <div class="col-6">
                                 <p class="text-muted small mb-1">Credits required</p>
                                 <p class="fw-semibold mb-0">
-                                    <span class="badge bg-primary">
-                                        @Model.CreditsRequired credit@(Model.CreditsRequired > 1 ? "s" : "")
-                                    </span>
+                                    <span class="badge bg-primary">@Model.CreditsRequired credit@(Model.CreditsRequired > 1 ? "s" : "")</span>
                                 </p>
                             </div>
                         </div>
@@ -48,26 +47,24 @@
                         <input type="hidden" asp-for="CreditsRequired" />
                         <input type="hidden" asp-for="DurationMinutes" />
 
-                        <div class="mb-4">
-                            <label asp-for="AppointmentDate" class="form-label"></label>
-                            <input asp-for="AppointmentDate"
-                                   type="datetime-local"
-                                   class="form-control"
-                                   min="@DateTime.Now.AddHours(1).ToString("yyyy-MM-ddTHH:mm")" />
-                            <span asp-validation-for="AppointmentDate"
-                                  class="text-danger small"></span>
-                            <div class="form-text">
-                                Bookings can be cancelled up to 24 hours before the appointment.
-                            </div>
+                        <h5 class="fw-bold mb-3">Select Date & Time</h5>
+                        <div class="form-floating mb-3">
+                            <input asp-for="AppointmentDate" type="datetime-local" class="form-control"
+                                   value="@Model.AppointmentDate.ToString("yyyy-MM-ddTHH:mm")"
+                                   min="@DateTime.UtcNow.AddHours(1).ToString("yyyy-MM-ddTHH:mm")" />
+                            <label asp-for="AppointmentDate"><i class="bi bi-calendar-event me-2 text-muted"></i>Appointment Date and Time</label>
+                            <span asp-validation-for="AppointmentDate" class="text-danger small"></span>
                         </div>
+                        <p class="text-muted small mb-4">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Bookings can be cancelled up to 24 hours before the appointment.
+                        </p>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary flex-grow-1">
-                                Confirm Booking
+                        <div class="d-flex gap-3 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary btn-lg btn-pill flex-grow-1">
+                                <i class="bi bi-calendar-check me-2"></i>Confirm Booking
                             </button>
-                            <a asp-action="Browse" class="btn btn-outline-secondary">
-                                Back
-                            </a>
+                            <a asp-action="Browse" class="btn btn-light btn-pill px-4">Cancel</a>
                         </div>
                     </form>
                 </div>

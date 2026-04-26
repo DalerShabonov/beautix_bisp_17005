@@ -1,66 +1,93 @@
-﻿@model beautix_bisp_17005.ViewModels.RegisterViewModel
+@model beautix_bisp_17005.ViewModels.RegisterViewModel
 @{
     ViewData["Title"] = "Create Account";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h2 class="card-title mb-1">Create your account</h2>
-                <p class="text-muted mb-4">Join Beautix and start booking beauty services today.</p>
-
-                <form asp-action="Register" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-
-                    <div class="mb-3">
-                        <label asp-for="FullName" class="form-label"></label>
-                        <input asp-for="FullName" class="form-control" placeholder="Your full name" />
-                        <span asp-validation-for="FullName" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" placeholder="you@example.com" />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="PhoneNumber" class="form-label"></label>
-                        <input asp-for="PhoneNumber" class="form-control" placeholder="+998 XX XXX XX XX" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" class="form-control" placeholder="Min. 8 characters" />
-                        <span asp-validation-for="Password" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="ConfirmPassword" class="form-label"></label>
-                        <input asp-for="ConfirmPassword" class="form-control" />
-                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label asp-for="Role" class="form-label"></label>
-                        <select asp-for="Role" class="form-select">
-                            <option value="Subscriber">I want to book beauty services</option>
-                            <option value="SalonPartner">I own a salon and want to partner with Beautix</option>
-                        </select>
-                        <span asp-validation-for="Role" class="text-danger small"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Create Account</button>
-                </form>
-
-                <hr class="my-3" />
-                <p class="text-center text-muted small mb-0">
-                    Already have an account?
-                    <a asp-action="Login">Sign in here</a>
-                </p>
+<div class="section-padding">
+    <div class="container">
+        <div class="auth-card animate-fade-in" style="max-width:520px;">
+            <div class="auth-header">
+                <div class="feature-icon mx-auto mb-3" style="width:56px;height:56px;">
+                    <i class="bi bi-person-plus" style="font-size:1.75rem;"></i>
+                </div>
+                <h2>Join Beautix</h2>
+                <p>Create your free account and start booking today.</p>
             </div>
+
+            <form method="post" asp-action="Register" asp-controller="Account" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="FullName" class="form-control" placeholder="Your full name" />
+                    <label asp-for="FullName"><i class="bi bi-person me-2 text-muted"></i>Full Name</label>
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Email" type="email" class="form-control" placeholder="name@example.com" />
+                    <label asp-for="Email"><i class="bi bi-envelope me-2 text-muted"></i>Email address</label>
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="+998 XX XXX XX XX" />
+                    <label asp-for="PhoneNumber"><i class="bi bi-telephone me-2 text-muted"></i>Phone Number (optional)</label>
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Password" class="form-control" placeholder="Password" />
+                    <label asp-for="Password"><i class="bi bi-lock me-2 text-muted"></i>Password</label>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                    <label asp-for="ConfirmPassword"><i class="bi bi-lock-fill me-2 text-muted"></i>Confirm Password</label>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+
+                <div class="mt-2">
+                    <label class="form-label text-muted small">I want to join as</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="form-check card-beautix p-3 text-center cursor-pointer">
+                                <input class="form-check-input" type="radio" asp-for="Role" id="roleSubscriber" value="Subscriber" checked>
+                                <label class="form-check-label d-block mt-2 fw-semibold" for="roleSubscriber">
+                                    <i class="bi bi-person text-primary d-block mb-1" style="font-size:1.25rem;"></i>
+                                    Customer
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-check card-beautix p-3 text-center cursor-pointer">
+                                <input class="form-check-input" type="radio" asp-for="Role" id="rolePartner" value="SalonPartner">
+                                <label class="form-check-label d-block mt-2 fw-semibold" for="rolePartner">
+                                    <i class="bi bi-shop text-primary d-block mb-1" style="font-size:1.25rem;"></i>
+                                    Salon Partner
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Role" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="terms" required>
+                    <label class="form-check-label small text-muted" for="terms">
+                        I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-pill py-2 mt-4">
+                    <i class="bi bi-person-check me-2"></i>Create Account
+                </button>
+
+                <div class="text-center mt-3">
+                    <span class="text-muted">Already have an account?</span>
+                    <a asp-controller="Account" asp-action="Login" class="text-primary fw-semibold text-decoration-none ms-1">Sign In</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>

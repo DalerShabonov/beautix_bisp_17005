@@ -1,8 +1,183 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Discover Beauty Services Near You";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-6">
+                <div class="animate-fade-in">
+                    <span class="badge bg-white text-primary border mb-3 px-3 py-2 rounded-pill fw-semibold">
+                        <i class="bi bi-stars me-1"></i> #1 Beauty Booking Platform
+                    </span>
+                    <h1 class="hero-title">Book Your <span>Glow Up</span> in Minutes</h1>
+                    <p class="hero-subtitle">Discover top-rated salons, spas, and beauty professionals. Book appointments instantly and manage your beauty routine effortlessly.</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a asp-controller="Booking" asp-action="Browse" class="btn btn-primary btn-lg btn-pill">
+                            <i class="bi bi-search me-2"></i>Find Services
+                        </a>
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary btn-lg btn-pill">
+                            Join for Free
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">500+</span>
+                            <span class="hero-stat-label">Salons</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">12k+</span>
+                            <span class="hero-stat-label">Bookings</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number">4.9</span>
+                            <span class="hero-stat-label">Rating</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <div class="card-beautix p-4 animate-fade-in" style="animation-delay: 0.2s;">
+                        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                            <div class="feature-icon mb-0" style="width:48px;height:48px;font-size:1.25rem;">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Upcoming Appointment</h6>
+                                <small class="text-muted">Today at 2:00 PM</small>
+                            </div>
+                            <span class="badge bg-success ms-auto">Confirmed</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div style="width:60px;height:60px;background:linear-gradient(135deg,#fecdd3,#ffe4e6);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+                                <i class="bi bi-shop text-primary" style="font-size:1.5rem;"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1 fw-bold">Glamour Studio</h6>
+                                <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>2.4 km away</small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mt-4">
+                            <button class="btn btn-primary btn-sm flex-fill">Reschedule</button>
+                            <button class="btn btn-light btn-sm flex-fill">Directions</button>
+                        </div>
+                    </div>
+                    <div class="card-beautix p-3 position-absolute" style="top:-20px;right:-20px;z-index:-1;opacity:0.6;transform:rotate(3deg);">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            <span class="fw-semibold small">Luxe Nails added to favorites</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="section-padding bg-soft">
+    <div class="container">
+        <div class="section-header">
+            <h2>How <span class="text-gradient">Beautix</span> Works</h2>
+            <p>Your beauty journey in three simple steps</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-card animate-on-scroll">
+                    <div class="step-number">1</div>
+                    <h4 class="feature-title">Discover</h4>
+                    <p class="feature-text">Browse through hundreds of verified salons and beauty professionals in your area with real reviews and photos.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card animate-on-scroll">
+                    <div class="step-number">2</div>
+                    <h4 class="feature-title">Book</h4>
+                    <p class="feature-text">Choose your service, pick a time slot that works for you, and confirm your appointment in seconds.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card animate-on-scroll">
+                    <div class="step-number">3</div>
+                    <h4 class="feature-title">Enjoy</h4>
+                    <p class="feature-text">Show up, get pampered, and leave glowing. Rate your experience to help others find the best spots.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="section-padding">
+    <div class="container">
+        <div class="section-header">
+            <h2>Why Choose <span class="text-gradient">Us</span></h2>
+            <p>Everything you need for a seamless beauty experience</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card-beautix h-100 animate-on-scroll">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <h5 class="feature-title">Instant Booking</h5>
+                        <p class="feature-text">Real-time availability with immediate confirmation. No phone calls needed.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card-beautix h-100 animate-on-scroll">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h5 class="feature-title">Verified Salons</h5>
+                        <p class="feature-text">Every salon partner is vetted and reviewed to ensure quality service.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card-beautix h-100 animate-on-scroll">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="bi bi-bell"></i>
+                        </div>
+                        <h5 class="feature-title">Smart Reminders</h5>
+                        <p class="feature-text">Never miss an appointment with automatic SMS and email reminders.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card-beautix h-100 animate-on-scroll">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="bi bi-tags"></i>
+                        </div>
+                        <h5 class="feature-title">Exclusive Deals</h5>
+                        <p class="feature-text">Subscribers get access to member-only discounts and priority booking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section-padding bg-soft">
+    <div class="container">
+        <div class="card-beautix p-5 text-center position-relative overflow-hidden animate-on-scroll">
+            <div class="position-relative z-1">
+                <h2 class="fw-bold mb-3">Ready to Transform Your Look?</h2>
+                <p class="text-muted mb-4 mx-auto" style="max-width:500px;">Join thousands of happy customers who book their beauty appointments through Beautix. It's free to get started.</p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg btn-pill px-5">Create Free Account</a>
+                    <a asp-controller="Subscription" asp-action="Plans" class="btn btn-outline-dark btn-lg btn-pill px-5">View Plans</a>
+                </div>
+            </div>
+            <div class="position-absolute top-0 end-0 w-100 h-100" style="background: radial-gradient(circle at 80% 20%, rgba(225,29,72,0.06) 0%, transparent 50%);"></div>
+        </div>
+    </div>
+</section>
