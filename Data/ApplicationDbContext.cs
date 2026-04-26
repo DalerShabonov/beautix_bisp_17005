@@ -19,14 +19,33 @@ namespace beautix_bisp_17005.Data
         {
             base.OnModelCreating(builder);
 
+            // Decimal column types
             builder.Entity<SubscriptionPlan>()
                 .Property(p => p.MonthlyPrice)
-                .HasColumnType("decimal(18,2)");
+                .HasColumnType("numeric(18,2)");
 
             builder.Entity<Service>()
                 .Property(s => s.Price)
-                .HasColumnType("decimal(18,2)");
+                .HasColumnType("numeric(18,2)");
 
+            // Boolean column types — required for PostgreSQL seed data
+            builder.Entity<SubscriptionPlan>()
+                .Property(p => p.IsActive)
+                .HasColumnType("boolean");
+
+            builder.Entity<Salon>()
+                .Property(s => s.IsApproved)
+                .HasColumnType("boolean");
+
+            builder.Entity<Service>()
+                .Property(s => s.IsAvailable)
+                .HasColumnType("boolean");
+
+            builder.Entity<UserSubscription>()
+                .Property(us => us.IsActive)
+                .HasColumnType("boolean");
+
+            // Relationships
             builder.Entity<UserSubscription>()
                 .HasOne(us => us.User)
                 .WithMany(u => u.Subscriptions)
@@ -50,7 +69,7 @@ namespace beautix_bisp_17005.Data
                 .WithMany(s => s.Bookings)
                 .HasForeignKey(b => b.ServiceId)
                 .OnDelete(DeleteBehavior.SetNull)
-                .IsRequired(false);                          
+                .IsRequired(false);
 
             builder.Entity<Salon>()
                 .HasOne(s => s.Owner)
@@ -64,10 +83,35 @@ namespace beautix_bisp_17005.Data
                 .HasForeignKey(sv => sv.SalonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Seed data
             builder.Entity<SubscriptionPlan>().HasData(
-                new SubscriptionPlan { Id = 1, Name = "Basic", Description = "3 services per month", MonthlyPrice = 79, ServiceAllowance = 3, IsActive = true },
-                new SubscriptionPlan { Id = 2, Name = "Standard", Description = "5 services per month", MonthlyPrice = 100, ServiceAllowance = 5, IsActive = true },
-                new SubscriptionPlan { Id = 3, Name = "Premium", Description = "Unlimited services per month", MonthlyPrice = 130, ServiceAllowance = 999, IsActive = true }
+                new SubscriptionPlan
+                {
+                    Id = 1,
+                    Name = "Basic",
+                    Description = "3 services per month",
+                    MonthlyPrice = 79,
+                    ServiceAllowance = 3,
+                    IsActive = true
+                },
+                new SubscriptionPlan
+                {
+                    Id = 2,
+                    Name = "Standard",
+                    Description = "5 services per month",
+                    MonthlyPrice = 100,
+                    ServiceAllowance = 5,
+                    IsActive = true
+                },
+                new SubscriptionPlan
+                {
+                    Id = 3,
+                    Name = "Premium",
+                    Description = "Unlimited services per month",
+                    MonthlyPrice = 130,
+                    ServiceAllowance = 999,
+                    IsActive = true
+                }
             );
         }
     }
