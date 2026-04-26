@@ -12,7 +12,7 @@ using beautix_bisp_17005.Data;
 namespace beautix_bisp_17005.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260425203121_InitialCreate")]
+    [Migration("20260426180220_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
