@@ -1,0 +1,103 @@
+﻿@model List<beautix_bisp_17005.ViewModels.AdminUserViewModel>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-semibold mb-0">User Management</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Registered</th>
+                        <th>Subscription</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">@user.FullName</td>
+                            <td class="align-middle text-muted small">
+                                @user.Email
+                            </td>
+                            <td class="align-middle">
+                                <span class="badge bg-secondary">@user.Role</span>
+                            </td>
+                            <td class="align-middle small">
+                                @user.RegisteredAt.ToString("dd MMM yyyy")
+                            </td>
+                            <td class="align-middle">
+                                @if (user.HasActiveSubscription)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark">None</span>
+                                }
+                            </td>
+                            <td class="align-middle">
+                                @if (user.IsLockedOut)
+                                {
+                                    <span class="badge bg-danger">Locked</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                            </td>
+                            <td class="align-middle text-end">
+                                @if (user.Role != "Admin")
+                                {
+                                    if (user.IsLockedOut)
+                                    {
+                                        <form asp-action="UnlockUser"
+                                              method="post" class="d-inline">
+                                            <input type="hidden" name="userId"
+                                                   value="@user.UserId" />
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-success">
+                                                Unlock
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="LockUser"
+                                              method="post" class="d-inline"
+                                              onsubmit="return confirm('Lock this user account?');">
+                                            <input type="hidden" name="userId"
+                                                   value="@user.UserId" />
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger">
+                                                Lock
+                                            </button>
+                                        </form>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

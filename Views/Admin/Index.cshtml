@@ -1,0 +1,199 @@
+﻿@model beautix_bisp_17005.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container py-5">
+    <h1 class="fw-semibold mb-4">Admin Dashboard</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    {{!-- Platform stats --}}
+    <div class="row g-3 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-1">Total users</p>
+                    <h2 class="fw-bold mb-0">@Model.TotalUsers</h2>
+                    <p class="text-muted small mt-1 mb-0">
+                        @Model.TotalSubscribers subscribers &middot;
+                        @Model.TotalSalonPartners partners
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-1">Active subscriptions</p>
+                    <h2 class="fw-bold mb-0">@Model.TotalActiveSubscriptions</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-1">Simulated revenue</p>
+                    <h2 class="fw-bold mb-0">
+                        $@Model.TotalSimulatedRevenue.ToString("N0")
+                    </h2>
+                    <p class="text-muted small mt-1 mb-0">this billing cycle</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-1">Total bookings</p>
+                    <h2 class="fw-bold mb-0">@Model.TotalBookings</h2>
+                    <p class="text-muted small mt-1 mb-0">
+                        @Model.ConfirmedBookings confirmed &middot;
+                        @Model.CancelledBookings cancelled
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 bg-light h-100">
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-1">Partner salons</p>
+                    <h2 class="fw-bold mb-0">@Model.TotalSalons</h2>
+                    <p class="text-muted small mt-1 mb-0">
+                        @Model.ApprovedSalons approved &middot;
+                        @if (Model.PendingSalons > 0)
+                        {
+                            <span class="text-warning fw-semibold">
+                                @Model.PendingSalons pending
+                            </span>
+                        }
+                        else
+                        {
+                            <span>0 pending</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{!-- Pending salons --}}
+    @if (Model.PendingSalonList.Any())
+    {
+        <div class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-semibold mb-0">
+                    Salons awaiting approval
+                    <span class="badge bg-warning text-dark ms-2">
+                        @Model.PendingSalonList.Count
+                    </span>
+                </h3>
+                <a asp-action="Salons" class="btn btn-sm btn-outline-secondary">
+                    View all salons
+                </a>
+            </div>
+            <div class="card shadow-sm">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Salon</th>
+                                <th>Owner</th>
+                                <th>District</th>
+                                <th>Services</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var salon in Model.PendingSalonList)
+                            {
+                                <tr>
+                                    <td class="align-middle">
+                                        <strong>@salon.SalonName</strong>
+                                    </td>
+                                    <td class="align-middle">
+                                        @salon.OwnerName
+                                        <br />
+                                        <small class="text-muted">
+                                            @salon.OwnerEmail
+                                        </small>
+                                    </td>
+                                    <td class="align-middle">@salon.District</td>
+                                    <td class="align-middle">@salon.TotalServices</td>
+                                    <td class="align-middle text-end">
+                                        <form asp-action="ApproveSalon"
+                                              method="post" class="d-inline">
+                                            <input type="hidden" name="salonId"
+                                                   value="@salon.SalonId" />
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-success">
+                                                Approve
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    {{!-- Recent users --}}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-semibold mb-0">Recent users</h3>
+        <a asp-action="Users" class="btn btn-sm btn-outline-secondary">
+            View all users
+        </a>
+    </div>
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Registered</th>
+                        <th>Subscription</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.RecentUsers)
+                    {
+                        <tr>
+                            <td class="align-middle">@user.FullName</td>
+                            <td class="align-middle text-muted">@user.Email</td>
+                            <td class="align-middle">
+                                <span class="badge bg-secondary">@user.Role</span>
+                            </td>
+                            <td class="align-middle">
+                                @user.RegisteredAt.ToString("dd MMM yyyy")
+                            </td>
+                            <td class="align-middle">
+                                @if (user.HasActiveSubscription)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark">None</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

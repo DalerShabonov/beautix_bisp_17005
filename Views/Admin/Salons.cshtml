@@ -1,0 +1,105 @@
+﻿@model List<beautix_bisp_17005.ViewModels.AdminSalonViewModel>
+@{
+    ViewData["Title"] = "Salon Management";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-semibold mb-0">Salon Management</h1>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            Back to Dashboard
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Salon</th>
+                        <th>Owner</th>
+                        <th>District</th>
+                        <th>Services</th>
+                        <th>Bookings</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var salon in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">
+                                <strong>@salon.SalonName</strong>
+                                <br />
+                                <small class="text-muted">
+                                    @salon.ContactPhone
+                                </small>
+                            </td>
+                            <td class="align-middle">
+                                @salon.OwnerName
+                                <br />
+                                <small class="text-muted">@salon.OwnerEmail</small>
+                            </td>
+                            <td class="align-middle">@salon.District</td>
+                            <td class="align-middle text-center">
+                                @salon.TotalServices
+                            </td>
+                            <td class="align-middle text-center">
+                                @salon.TotalBookings
+                            </td>
+                            <td class="align-middle">
+                                @if (salon.IsApproved)
+                                {
+                                    <span class="badge bg-success">Approved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+                                }
+                            </td>
+                            <td class="align-middle text-end">
+                                @if (!salon.IsApproved)
+                                {
+                                    <form asp-action="ApproveSalon"
+                                          method="post" class="d-inline">
+                                        <input type="hidden" name="salonId"
+                                               value="@salon.SalonId" />
+                                        <button type="submit"
+                                                class="btn btn-sm btn-success me-1">
+                                            Approve
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="SuspendSalon"
+                                          method="post" class="d-inline"
+                                          onsubmit="return confirm('Suspend this salon?');">
+                                        <input type="hidden" name="salonId"
+                                               value="@salon.SalonId" />
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger">
+                                            Suspend
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
