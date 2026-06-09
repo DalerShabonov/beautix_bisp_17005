@@ -8,27 +8,24 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Read SUPABASE_CONNECTION environment variable if present (Railway + Supabase)
-var supabaseConnection = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
+// Database connection string is resolved below (env var first, then appsettings).
 
-// Always use PostgreSQL � Npgsql for both local and production
-// For local development set SUPABASE_CONNECTION in your environment
-// For production Railway sets SUPABASE_CONNECTION automatically
-if (!string.IsNullOrEmpty(supabaseConnection))
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(supabaseConnection));
-}
-else
-{
-    // Fallback: read from appsettings.json
-    // For local dev point DefaultConnection to your Supabase connection string
-    var localConnection = builder.Configuration
-        .GetConnectionString("DefaultConnection")!;
+// Production (Railway): set the SUPABASE_CONNECTION environment variable.
+// Local dev: use `dotnet user-secrets` or ConnectionStrings:DefaultConnection.
+// Never commit a real connection string to source control.
+var connectionString =
+    Environment.GetEnvironmentVariable("SUPABASE_CONNECTION")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(localConnection));
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "No database connection configured. Set the SUPABASE_CONNECTION environment variable " +
+        "(Railway) or ConnectionStrings:DefaultConnection (local user-secrets / appsettings).");
 }
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddDataProtection()
     .PersistKeysToDbContext<ApplicationDbContext>()
@@ -68,12 +65,27 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    // Auto-apply migrations on startup
-    var db = services.GetRequiredService<ApplicationDbContext>();
-    await db.Database.MigrateAsync();
+    try
+    {
+        // Auto-apply migrations on startup
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        await db.Database.MigrateAsync();
 
-    await SeedRolesAsync(services);
-    await SeedAdminUserAsync(services);
+        await SeedRolesAsync(services);
+        await SeedAdminUserAsync(services, app.Logger);
+
+        app.Logger.LogInformation("Database migrated and seeded successfully.");
+    }
+    catch (Exception ex)
+    {
+        // A database outage must not take the whole site down with a blank page.
+        // The app still boots so database-independent pages (e.g. the landing page)
+        // keep serving; database-backed features stay unavailable until the
+        // connection is restored.
+        app.Logger.LogError(ex,
+            "Database initialization failed at startup. The app will keep running, " +
+            "but database-backed features are unavailable until the DB connection is restored.");
+    }
 }
 
 if (!app.Environment.IsDevelopment())
@@ -113,12 +125,23 @@ static async Task SeedRolesAsync(IServiceProvider serviceProvider)
     }
 }
 
-static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
+static async Task SeedAdminUserAsync(IServiceProvider serviceProvider, ILogger logger)
 {
+    // Admin credentials come from environment variables so they are never
+    // committed to source control. If either is missing, skip seeding.
+    var email = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
+    var password = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+
+    if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+    {
+        logger.LogWarning(
+            "ADMIN_EMAIL / ADMIN_PASSWORD not set - skipping admin user seeding. " +
+            "Set both environment variables to create the platform administrator.");
+        return;
+    }
+
     var adminService = serviceProvider
         .GetRequiredService<IAdminService>();
 
-    await adminService.SeedAdminAsync(
-        email: "admin@beautix.uz",
-        password: "Admin@12345");
+    await adminService.SeedAdminAsync(email, password);
 }
