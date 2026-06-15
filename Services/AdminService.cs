@@ -7,9 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace beautix_bisp_17005.Services
 {
+    /// <summary>
+    /// Platform-administration logic: the stats dashboard, user/salon management,
+    /// approving or suspending salons, locking/unlocking accounts, and seeding the
+    /// first admin. It uses both the DbContext (for salons/bookings/subscriptions)
+    /// and Identity's UserManager (for users and roles).
+    /// </summary>
     public class AdminService : IAdminService
     {
         private readonly ApplicationDbContext _context;
+        // UserManager is Identity's API for users/roles/lockout — we don't query
+        // the Identity tables directly.
         private readonly UserManager<ApplicationUser> _userManager;
 
         public AdminService(
@@ -20,9 +28,13 @@ namespace beautix_bisp_17005.Services
             _userManager = userManager;
         }
 
+        // Aggregates the headline numbers for the admin home page.
         public async Task<AdminDashboardViewModel> GetDashboardAsync()
         {
             var allUsers = await _userManager.Users.ToListAsync();
+
+            // Roles aren't a simple column, so we ask Identity per user and bucket
+            // them into subscribers vs salon partners for the counts.
 
             var subscribers = new List<ApplicationUser>();
             var salonPartners = new List<ApplicationUser>();
@@ -42,6 +54,8 @@ namespace beautix_bisp_17005.Services
                 .Where(us => us.IsActive)
                 .ToListAsync();
 
+            // "Simulated" revenue = sum of monthly prices across active subs
+            // (no real payments are processed in this project).
             var revenue = subscriptions.Sum(us => us.Plan.MonthlyPrice);
 
             var recentUsers = allUsers
@@ -69,6 +83,8 @@ namespace beautix_bisp_17005.Services
                 });
             }
 
+            // Salons still awaiting approval — surfaced on the dashboard so the
+            // admin can action them quickly.
             var pendingSalons = await _context.Salons
                 .Include(s => s.Owner)
                 .Include(s => s.Services)
@@ -107,6 +123,8 @@ namespace beautix_bisp_17005.Services
             };
         }
 
+        // Full user list for the admin "Users" page, with each user's role and
+        // whether they currently have an active subscription / are locked out.
         public async Task<List<AdminUserViewModel>> GetAllUsersAsync()
         {
             var allUsers = await _userManager.Users
@@ -137,6 +155,8 @@ namespace beautix_bisp_17005.Services
             return result;
         }
 
+        // Full salon list for the admin "Salons" page. Ordered so unapproved
+        // salons (IsApproved = false) appear first for easy moderation.
         public async Task<List<AdminSalonViewModel>> GetAllSalonsAsync()
         {
             return await _context.Salons
@@ -160,6 +180,7 @@ namespace beautix_bisp_17005.Services
                 .ToListAsync();
         }
 
+        // Approve a salon — makes it visible to customers and bookable.
         public async Task<bool> ApproveSalonAsync(int salonId)
         {
             var salon = await _context.Salons.FindAsync(salonId);
@@ -171,6 +192,7 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Suspend a salon — flips approval back off so it disappears from booking.
         public async Task<bool> SuspendSalonAsync(int salonId)
         {
             var salon = await _context.Salons.FindAsync(salonId);
@@ -182,6 +204,8 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Ban a user by setting their lockout end 100 years in the future — a
+        // simple way to disable an account without deleting it.
         public async Task<bool> LockUserAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -192,6 +216,7 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Re-enable a user: clearing the lockout end date lets them sign in again.
         public async Task<bool> UnlockUserAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -201,6 +226,8 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Creates the initial platform administrator at startup (called from
+        // Program.cs). Idempotent: if the admin already exists, it does nothing.
         public async Task<bool> SeedAdminAsync(string email, string password)
         {
             var existing = await _userManager.FindByEmailAsync(email);

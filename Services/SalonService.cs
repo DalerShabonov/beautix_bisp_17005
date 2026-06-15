@@ -7,6 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace beautix_bisp_17005.Services
 {
+    /// <summary>
+    /// All salon-side operations for a SalonPartner: creating/editing their salon,
+    /// managing services, and building the dashboard. Every method that changes
+    /// data also checks ownership (OwnerUserId == ownerId) so partners can only
+    /// ever touch their own salon and services.
+    /// </summary>
     public class SalonService : ISalonService
     {
         private readonly ApplicationDbContext _context;
@@ -16,6 +22,7 @@ namespace beautix_bisp_17005.Services
             _context = context;
         }
 
+        // Finds the salon belonging to a given owner (a partner has at most one).
         public async Task<Salon?> GetSalonByOwnerAsync(string ownerId)
         {
             return await _context.Salons
@@ -23,6 +30,8 @@ namespace beautix_bisp_17005.Services
                 .FirstOrDefaultAsync(s => s.OwnerUserId == ownerId);
         }
 
+        // Registers a new salon. Returns false if the partner already owns one,
+        // enforcing the "one salon per partner" rule. New salons start unapproved.
         public async Task<bool> CreateSalonAsync(string ownerId, SalonCreateViewModel model)
         {
             var existing = await GetSalonByOwnerAsync(ownerId);
@@ -46,6 +55,9 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Updates a salon's profile. The query filters on both salonId AND ownerId,
+        // so a partner can't edit a salon that isn't theirs (note: this does not
+        // change IsApproved — approval stays an admin-only decision).
         public async Task<bool> UpdateSalonAsync(
             int salonId, string ownerId, SalonCreateViewModel model)
         {
@@ -67,6 +79,8 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Builds the partner dashboard: the salon's profile, its services, summary
+        // counts (total/confirmed/today's bookings) and the 10 most recent bookings.
         public async Task<SalonDashboardViewModel?> GetDashboardAsync(string ownerId)
         {
             var salon = await _context.Salons
@@ -76,6 +90,7 @@ namespace beautix_bisp_17005.Services
             if (salon == null)
                 return null;
 
+            // Pull every booking made against any of this salon's services.
             var bookings = await _context.Bookings
                 .Include(b => b.User)
                 .Include(b => b.Service)
@@ -124,6 +139,7 @@ namespace beautix_bisp_17005.Services
             };
         }
 
+        // Adds a service to the partner's salon (after confirming they own it).
         public async Task<bool> AddServiceAsync(
             int salonId, string ownerId, ServiceCreateViewModel model)
         {
@@ -149,6 +165,8 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Flips a service between available/hidden. Joins through Salon so we can
+        // verify the requesting partner actually owns the service's salon.
         public async Task<bool> ToggleServiceAvailabilityAsync(
             int serviceId, string ownerId)
         {
@@ -166,6 +184,8 @@ namespace beautix_bisp_17005.Services
             return true;
         }
 
+        // Permanently removes a service (again, only if the partner owns it).
+        // Existing bookings survive — their ServiceId is set to null by the DB rule.
         public async Task<bool> DeleteServiceAsync(int serviceId, string ownerId)
         {
             var service = await _context.Services

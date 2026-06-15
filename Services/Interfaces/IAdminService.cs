@@ -2,6 +2,10 @@
 
 namespace beautix_bisp_17005.Services.Interfaces
 {
+    /// <summary>
+    /// Contract for platform-administration operations used by the AdminController,
+    /// plus SeedAdminAsync which Program.cs calls at startup.
+    /// </summary>
     public interface IAdminService
     {
         Task<AdminDashboardViewModel> GetDashboardAsync();

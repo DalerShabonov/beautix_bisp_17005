@@ -7,6 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace beautix_bisp_17005.Controllers
 {
+    /// <summary>
+    /// Customer-facing booking pages. The class-level [Authorize(Roles = "Subscriber")]
+    /// means every action here requires a logged-in Subscriber — partners/admins
+    /// can't reach it. The controller stays thin: it delegates the real work to the
+    /// services and just handles routing and TempData messages.
+    /// </summary>
     [Authorize(Roles = "Subscriber")]
     public class BookingController : Controller
     {
@@ -24,7 +30,9 @@ namespace beautix_bisp_17005.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Booking/Browse
+        // GET: /Booking/Browse — list bookable salons/services.
+        // Gate: you must hold an active subscription, otherwise we send you to pick
+        // a plan first. TempData carries a one-time message across the redirect.
         [HttpGet]
         public async Task<IActionResult> Browse()
         {
@@ -41,7 +49,9 @@ namespace beautix_bisp_17005.Controllers
             return View(salons);
         }
 
-        // GET: /Booking/Book/5
+        // GET: /Booking/Book/5 — show the booking form for one service.
+        // Checks subscription, that the service exists, and that the user has enough
+        // credits — bouncing back to Browse with a message if any check fails.
         [HttpGet]
         public async Task<IActionResult> Book(int serviceId)
         {
@@ -74,7 +84,9 @@ namespace beautix_bisp_17005.Controllers
             return View(viewModel);
         }
 
-        // POST: /Booking/Book
+        // POST: /Booking/Book — actually create the booking.
+        // The service returns (success, message); on failure we re-show the form
+        // with the reason, on success we PRG-redirect to the bookings list.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Book(BookingCreateViewModel model)
@@ -97,7 +109,7 @@ namespace beautix_bisp_17005.Controllers
             return RedirectToAction("MyBookings");
         }
 
-        // GET: /Booking/MyBookings
+        // GET: /Booking/MyBookings — the signed-in user's own booking history.
         [HttpGet]
         public async Task<IActionResult> MyBookings()
         {
@@ -106,7 +118,8 @@ namespace beautix_bisp_17005.Controllers
             return View(bookings);
         }
 
-        // POST: /Booking/Cancel
+        // POST: /Booking/Cancel — cancel a booking and refund its credit.
+        // We pass the current userId so the service can confirm ownership.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int bookingId)

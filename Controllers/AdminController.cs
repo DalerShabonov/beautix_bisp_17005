@@ -4,6 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace beautix_bisp_17005.Controllers
 {
+    /// <summary>
+    /// The admin back-office. The whole controller is locked to the "Admin" role,
+    /// so none of these pages or actions are reachable by ordinary users. Read
+    /// actions (Index/Users/Salons) are GET; state changes (approve/suspend/lock)
+    /// are POST + anti-forgery token.
+    /// </summary>
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {

@@ -3,6 +3,9 @@ using beautix_bisp_17005.ViewModels;
 
 namespace beautix_bisp_17005.Services.Interfaces
 {
+    /// <summary>
+    /// Contract for salon and service management used by the SalonController.
+    /// </summary>
     public interface ISalonService
     {
         Task<Salon?> GetSalonByOwnerAsync(string ownerId);
